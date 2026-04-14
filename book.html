@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Local Shop</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* HERO */
+.hero {
+  background: url('https://i.ibb.co/GvrwzBxm/2303-w061-n005-115-B-p1-116.jpg') center/cover no-repeat;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 40px;
+}
+
+.btn {
+  background: orange;
+  padding: 12px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+/* PRODUCTS */
+.products {
+  padding: 20px;
+}
+
+.carousel {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+}
+
+.card {
+  min-width: 200px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* CART ICON */
+.cart-icon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: black;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.cart-count {
+  background: red;
+  border-radius: 50%;
+  padding: 3px 7px;
+  margin-left: 5px;
+}
+
+/* CART MODAL */
+.cart-modal {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 300px;
+  height: 100%;
+  background: white;
+  padding: 15px;
+  display: none;
+  overflow-y: auto;
+}
+
+input {
+  width: 100%;
+  margin: 5px 0;
+  padding: 8px;
+}
+
+/* WHATSAPP */
+.whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: green;
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>The Local Shop</h1>
+  <p>General Book Store</p>
+  <button class="btn" onclick="scrollToProducts()">Shop Now</button>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products" id="products">
+  <h2>Our Books</h2>
+  <div class="carousel">
+
+    <div class="card">
+      <img src="https://i.ibb.co/1GtLPpHT/c.png">
+      <h4>C Programming</h4>
+      <p>₹299</p>
+      <button onclick="addToCart('C Programming',299)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="https://i.ibb.co/mFchjyVN/413xuuo-Fyl-S-1.jpg">
+      <h4>Data Structures</h4>
+      <p>₹399</p>
+      <button onclick="addToCart('Data Structures',399)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="https://i.ibb.co/BHk5xjvG/html.jpg">
+      <h4>HTML</h4>
+      <p>₹199</p>
+      <button onclick="addToCart('HTML',199)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="https://i.ibb.co/WWQ5pdQF/java.jpg">
+      <h4>Java</h4>
+      <p>₹349</p>
+      <button onclick="addToCart('Java',349)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="https://i.ibb.co/ccXKVBKM/js.png">
+      <h4>JavaScript</h4>
+      <p>₹249</p>
+      <button onclick="addToCart('JavaScript',249)">Add</button>
+    </div>
+
+    <div class="card">
+      <img src="https://i.ibb.co/67Wm9vmX/css.jpg">
+      <h4>CSS</h4>
+      <p>₹199</p>
+      <button onclick="addToCart('CSS',199)">Add</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- CART ICON -->
+<div class="cart-icon" onclick="toggleCart()">
+  🛒 <span class="cart-count" id="count">0</span>
+</div>
+
+<!-- CART MODAL -->
+<div class="cart-modal" id="cartModal">
+  <h3>Your Cart</h3>
+  <ul id="cartItems"></ul>
+
+  <h4>Customer Details</h4>
+  <input type="text" id="name" placeholder="Your Name">
+  <input type="text" id="phone" placeholder="Phone Number">
+
+  <button class="btn" onclick="sendOrder()">Send Order</button>
+</div>
+
+<!-- WHATSAPP -->
+<a class="whatsapp" href="https://wa.me/9027907741">💬</a>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@2/dist/email.min.js"></script>
+
+<script>
+emailjs.init("YOUR_PUBLIC_KEY"); // Replace
+
+let cart = [];
+
+function scrollToProducts() {
+  document.getElementById('products').scrollIntoView();
+}
+
+function addToCart(name, price) {
+  cart.push({name, price});
+  updateCart();
+}
+
+function updateCart() {
+  document.getElementById('count').innerText = cart.length;
+
+  let list = document.getElementById('cartItems');
+  list.innerHTML = "";
+
+  cart.forEach(item => {
+    let li = document.createElement('li');
+    li.innerText = item.name + " - ₹" + item.price;
+    list.appendChild(li);
+  });
+}
+
+function toggleCart() {
+  let modal = document.getElementById('cartModal');
+  modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+}
+
+function sendOrder() {
+  let name = document.getElementById('name').value;
+  let phone = document.getElementById('phone').value;
+
+  let items = cart.map(i => i.name + " ₹" + i.price).join(", ");
+
+  emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+    customer_name: name,
+    customer_phone: phone,
+    order_items: items,
+    to_email: "qumsgk@gmail.com"
+  }).then(() => {
+    alert("Order Sent Successfully!");
+    cart = [];
+    updateCart();
+  }).catch(err => {
+    alert("Error sending order");
+    console.log(err);
+  });
+}
+</script>
+
+</body>
+</html>
